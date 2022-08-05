@@ -60,7 +60,7 @@ const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCa
 
             <div className='product_info w-full'>
                 <div className='flex justify-between mb-1'>
-                    <h4 className='product_name text-lg font-medium'>{product.name ? product.name : ''}</h4>
+                    <h4 className='product_name text-lg font-medium leading-snug'>{product.name ? product.name : ''}</h4>
                     <span className='sm:inline-block hidden ml-4 whitespace-nowrap'>{product.calories ? `${Math.floor(product.calories)} kCal` : ''}</span>
                     <span className='inline-block sm:hidden ml-2 text-lg whitespace-nowrap font-extrabold'>{product.price ? `${product.price} AED` : ''}</span>
                 </div>

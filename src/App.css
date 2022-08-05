@@ -39,6 +39,9 @@
     .main_product {
         padding: 0.6rem;
     }
+    .product_name {
+        font-weight: 400;
+    }
     .product-btn {
         padding: 0.5rem;
         height: 28px;
