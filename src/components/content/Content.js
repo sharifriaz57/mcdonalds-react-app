@@ -6,9 +6,12 @@ import Product from './Product';
 import { useState, useEffect } from 'react';
 import { productActions } from '../../redux/actions/actions';
 import { bindActionCreators } from 'redux';
+import { useRef } from 'react';
 
 const Content = ({ products, loading, cartLoading, addToCart, addToCartInput, removeFromCart, handleSkeleton, stopLoadingSkeleton, getOccurrence }) => {
     const currentMenu = useSelector(state => state.currentMenu);
+    const appContent = useRef(null);
+    const [isScrolled, setIsScrolled] = useState(false);
     const [productSortValue, setProductSortValue] = useState("name");
     const dispatch = useDispatch();
     const { getCategoryProductActionCreator } = bindActionCreators(productActions, dispatch);
@@ -19,6 +22,10 @@ const Content = ({ products, loading, cartLoading, addToCart, addToCartInput, re
             setProductSortValue(currentSortOption);
         }
     }, [productSortValue])
+
+    const addShadowOnScroll = (e) => {
+        setIsScrolled(e.target.scrollTop > 0);
+    }
     
     const handleProdcutSort = (e) => {
         handleSkeleton();
@@ -54,7 +61,7 @@ const Content = ({ products, loading, cartLoading, addToCart, addToCartInput, re
                 <Skeleton count={3} type={'product'} loading={loading} />
             </div>
 
-            <div id='products' className={`sm:pr-4 pr-3 ${loading ? 'hidden' : ''}`}>
+            <div id='products' ref={appContent} className={`sm:pr-4 pr-3 ${loading ? 'hidden' : ''} ${isScrolled ? 'shadow-bottom' : ''}`} onScroll={addShadowOnScroll}>
                 {products && products.length > 0 && products.map((product, key) =>
                     (product.name && product.name !== '') || product.price
                         ? <Product key={key} product={product} cartLoading={cartLoading}
