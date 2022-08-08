@@ -60,7 +60,15 @@ const cartReducer = (state = initState, action) => {
             let cartItemQtyWithoutThisInput = 0;
             let subTotalWithoutThisInput = 0;
             let totalTaxWithoutThisInput = 0;
-            let itemsQty = Number(action.payload.qty === '0' || action.payload.qty === '' ? 1 : action.payload.qty);
+            let itemsQty = 0;
+
+            if (action.payload.qty === '0') {
+                itemsQty = 1;
+            } else if (action.payload.qty === '') {
+                itemsQty = 0;
+            } else {
+                itemsQty = Number(action.payload.qty);
+            }
             
             itemsInfoInput.forEach((info, i) => {
                 if (info.id === action.payload.details.id) {

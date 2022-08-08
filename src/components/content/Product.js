@@ -1,11 +1,11 @@
-import { useEffect } from "react";
-import { useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FiMinus } from "react-icons/fi";
 import { useSelector } from 'react-redux';
 
 const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCart }) => {
     const cart = useSelector(state => state.cart);
+    const [currentItemId, setCurrentItemId] = useState(null); 
     const cartInput = useRef();
 
     useEffect(() => {
@@ -14,11 +14,20 @@ const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCa
         }
     }, [])
 
+    useEffect(() => {
+        if (cart.cartItems === 0) {
+            setCurrentItemId(null);
+        }
+        if (cart.cartItems > 0 && currentItemId !== null) {
+            setInputValue(currentItemId);
+        }
+    }, [cart])
+
     const setValueOnLoad = () => {
         cart.uniqueItemsId.length > 0 && cart.uniqueItemsId.forEach(id => {
             const qty = itemQuantity(id);
             if (cartInput.current.id === `inputQty${id}`) {
-                cartInput.current.value = qty === 0 ? 1 : qty;
+                cartInput.current.value = qty;
             }
         });
     }
@@ -31,25 +40,33 @@ const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCa
 
     const setInputValue = (id) => {
         const qty = itemQuantity(id);
-        cartInput.current.value = qty === 0 ? 1 : qty;
+        cartInput.current.value = qty;
         setTimeout(() => {
             cartInput.current.focus();
         }, 0)
     }
 
-    const addFunc = async (id) => {
-        await addToCart(id);
-        setInputValue(id);
+    const addFunc = (id) => {
+        setCurrentItemId(id);
+        addToCart(id);
     }
 
-    const removeFunc = async (id) => {
-        await removeFromCart(id)
-        setInputValue(id);
+    const removeFunc = (id) => {
+        setCurrentItemId(id);
+        removeFromCart(id);
     }
 
-    const addInputFunc = async (id, inputValue) => {
-        await addToCartInput(id, inputValue)
-        setInputValue(id);
+    const addInputFunc = (id, inputValue) => {
+        if (inputValue !== '') {
+            setCurrentItemId(id);
+            addToCartInput(id, inputValue);
+        }
+    }
+
+    const resetEmptyValueFunc = (id, inputValue) => {
+        if (inputValue === '') {
+            addToCartInput(id, 1);
+        }
     }
 
     return (
@@ -92,6 +109,7 @@ const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCa
                                        focus:text-gray-700 focus:border-lightYellow focus:outline-none focus:bg-white focus:ring-0"
                                         disabled={cartLoading.loading}
                                         onChange={(e) => addInputFunc(product.id, e.target.value)}
+                                        onBlur={(e) => resetEmptyValueFunc(product.id, e.target.value)}
                                     />
                                 </div>
 
