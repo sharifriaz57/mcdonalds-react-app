@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { menuAction, productActions } from '../../redux/actions/actions';
 import Skeleton from '../content/Skeleton';
 
-const Sidebar = ({ focusOnSearch, handleSkeleton }) => {
+const Sidebar = ({ focusOnSearch, toggleProductLoading }) => {
     const [loading, setLoading] = useState(true);
     const [activeMenu, setActiveMenu] = useState(null);
     const quickSearch = useRef(null);
@@ -16,7 +16,6 @@ const Sidebar = ({ focusOnSearch, handleSkeleton }) => {
     const { getAllMenuActionCreator, getCurrentMenuActionCreator } = bindActionCreators(menuAction, dispatch);
     const { getCategoryProductActionCreator } = bindActionCreators(productActions, dispatch);
     
-
     useEffect(() => {
         getSidebarMenu();
         loadCategoryProducts();
@@ -35,9 +34,9 @@ const Sidebar = ({ focusOnSearch, handleSkeleton }) => {
             setLoading(false);
         }
     }
-
+    
     const loadCategoryProducts = async (e, id) => {
-        handleSkeleton();
+        toggleProductLoading(true);
         setActiveMenu(id);
         const categoryDetails = await getCategoryByCategoryId(id);
         const products = await getProductsByCategoryId(id);
@@ -67,7 +66,6 @@ const Sidebar = ({ focusOnSearch, handleSkeleton }) => {
     }
 
     const searchByName = handleSearch(async (e) => {
-        handleSkeleton();
         setLoading(true);
         const searchKey = e.target.value;
         const response = await SearchMenuProductsByName(searchKey)

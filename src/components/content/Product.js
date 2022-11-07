@@ -1,27 +1,26 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FiMinus } from "react-icons/fi";
 import { useSelector } from 'react-redux';
+import useCartAction from "../../customHooks/cartActionHooks";
+import * as actionTypes from '../../redux/actions/actionTypes';
 
-const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCart }) => {
+const Product = ({ product }) => {
     const cart = useSelector(state => state.cart);
-    const [currentItemId, setCurrentItemId] = useState(null); 
     const cartInput = useRef();
+    const { cartLoading, invokeCartAction } = useCartAction();
 
     useEffect(() => {
         if (cartInput.current) {
             setValueOnLoad();
         }
-    }, [])
-
-    useEffect(() => {
-        if (cart.cartItems === 0) {
-            setCurrentItemId(null);
-        }
-        if (cart.cartItems > 0 && currentItemId !== null) {
-            setInputValue(currentItemId);
-        }
     }, [cart])
+
+    const itemQuantity = (id) => {
+        let qty = 0;
+        cart.itemsInfo.length > 0 && cart.itemsInfo.forEach(item => item.id === id ? qty = item.qty : false);
+        return qty;
+    }
 
     const setValueOnLoad = () => {
         cart.uniqueItemsId.length > 0 && cart.uniqueItemsId.forEach(id => {
@@ -32,42 +31,29 @@ const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCa
         });
     }
 
-    const itemQuantity = (id) => {
-        let qty = 0;
-        cart.itemsInfo.length > 0 && cart.itemsInfo.forEach(item => item.id === id ? qty = item.qty : 0);
-        return qty;
-    }
-
-    const setInputValue = (id) => {
-        const qty = itemQuantity(id);
-        cartInput.current.value = qty;
-        setTimeout(() => {
-            cartInput.current.focus();
-        }, 0)
-    }
-
-    const addFunc = (id) => {
-        setCurrentItemId(id);
-        addToCart(id);
-    }
-
-    const removeFunc = (id) => {
-        setCurrentItemId(id);
-        removeFromCart(id);
-    }
-
-    const addInputFunc = (id, inputValue) => {
-        if (inputValue !== '') {
-            setCurrentItemId(id);
-            addToCartInput(id, inputValue);
+    const setInputValue = (product) => {
+        const qty = itemQuantity(product.id);
+        if (cartInput.current) {
+            cartInput.current.value = qty;
         }
     }
 
-    const resetEmptyValueFunc = (id, inputValue) => {
-        if (inputValue === '') {
-            addToCartInput(id, 1);
-        }
+    const addFunc = (product) => {
+        invokeCartAction(product, actionTypes.ADD_TO_CART);
+        setInputValue(product);
     }
+
+    const removeFunc = (product) => {
+        invokeCartAction(product, actionTypes.REMOVE_FROM_CART);
+        setInputValue(product);
+    }
+
+    const addInputFunc = (product, inputValue) => {
+        inputValue === '' || Number(inputValue) < 0
+            ? invokeCartAction(product, actionTypes.ADD_TO_CART_INPUT, 1) 
+            : invokeCartAction(product, actionTypes.ADD_TO_CART_INPUT, inputValue) 
+    }
+
 
     return (
         <div key={product.id} className='main_product flex p-4 bg-white border mb-4 rounded-lg shadow-md'>
@@ -90,14 +76,14 @@ const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCa
                     <div className='flex items-center'>
 
                         {cart.uniqueItemsId.indexOf(product.id) === -1
-                            ? <button type="button" onClick={() => addFunc(product.id)}
+                            ? <button type="button" onClick={() => addFunc(product)}
                                 className={`product-btn relative flex items-center px-5 py-1 rounded-md text-md capitalize transition ease-out duration-300 bg-lightYellow hover:bg-yellow-400 ${cartLoading.loading ? 'cursor-not-allowed' : ''}`}
                                 disabled={cartLoading.loading}
                             >
                                 Add to Cart
                             </button>
                             : <div className='flex items-center'>
-                                <button onClick={() => removeFunc(product.id)}
+                                <button onClick={() => removeFunc(product)}
                                     className={`product-btn px-4 rounded-md h-8 capitalize transition ease-out duration-300 bg-lightYellow hover:bg-yellow-400 ${cartLoading.loading ? 'cursor-not-allowed' : ''}`}
                                     disabled={cartLoading.loading}
                                 >
@@ -108,12 +94,11 @@ const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCa
                                     <input type="number" ref={cartInput} id={`inputQty${product.id}`} className="appearance-none inline-block text-center w-16 h-8 px-2 py-1 text-lg font-bold bg-slate-200 text-gray-600 border border-gray-300 rounded-md leading-tight 
                                        focus:text-gray-700 focus:border-lightYellow focus:outline-none focus:bg-white focus:ring-0"
                                         disabled={cartLoading.loading}
-                                        onChange={(e) => addInputFunc(product.id, e.target.value)}
-                                        onBlur={(e) => resetEmptyValueFunc(product.id, e.target.value)}
+                                        onBlur={(e) => addInputFunc(product, e.target.value)}
                                     />
                                 </div>
 
-                                <button onClick={() => addFunc(product.id)}
+                                <button onClick={() => addFunc(product)}
                                     className={`product-btn px-4 rounded-md h-8 capitalize transition ease-out duration-300 bg-lightYellow hover:bg-yellow-400 ${cartLoading.loading ? 'cursor-not-allowed' : ''}`}
                                     disabled={cartLoading.loading}
                                 >
@@ -122,7 +107,7 @@ const Product = ({ product, cartLoading, addToCart, addToCartInput, removeFromCa
                             </div>
                         }
 
-                        <img src="/images/loader2.gif" className={`h-8 w-8 sm:ml-3 ml-1 ${cartLoading.id && cartLoading.id === product.id ? '' : 'hidden'}`} alt="" />
+                        <img src="/images/loader2.gif" className={`h-8 w-8 sm:ml-3 ml-1 ${cartLoading.loading && cartLoading.id === product.id ? '' : 'hidden'}`} alt="" />
                     </div>
 
                     <span className='sm:inline-block hidden text-xl font-extrabold'>{product.price ? `${product.price} AED` : ''}</span>

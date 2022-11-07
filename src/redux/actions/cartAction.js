@@ -1,56 +1,55 @@
-import * as repository from "../../repository/Repository";
 import * as actionTypes from "./actionTypes";
 
-export const addToCartAction = (id) => {
-    return async (dispatch) => {
-        const response = await repository.getDetailsByProductId(id);
+export const addToCartAction = (product) => {
+    return (dispatch) => {
+        
         dispatch({
             type: actionTypes.ADD_TO_CART,
             payload: {
-                details: response.status === 200 ? response.data : {}
+                details: product
             }
         })
     }
 }
 
-export const addToCartInputAction = (id, qty) => {
-    return async (dispatch) => {
-        const response = await repository.getDetailsByProductId(id);
+export const addToCartInputAction = (product, inputValue) => {
+    return (dispatch) => {
+        
         dispatch({
             type: actionTypes.ADD_TO_CART_INPUT,
             payload: {
-                qty: qty,
-                details: response.status === 200 ? response.data : {}
+                qty: inputValue,
+                details: product
             }
         })
     }
 }
 
-export const removeFromCartAction = (id) => {
-    return async (dispatch) => {
-        const response = await repository.getDetailsByProductId(id);
+export const removeFromCartAction = (product) => {
+    return (dispatch) => {
+        
         dispatch({
             type: actionTypes.REMOVE_FROM_CART,
             payload: {
-                details: response.status === 200 ? response.data : {}
+                details: product
             }
         })
     }
 }
 
-export const deleteFromCartAction = (id) => {
-    return async (dispatch) => {
-        const response = await repository.getDetailsByProductId(id);
+export const deleteFromCartAction = (product) => {
+    return (dispatch) => {
+        
         dispatch({
             type: actionTypes.DELETE_FROM_CART,
             payload: {
-                details: response.status === 200 ? response.data : {}
+                details: product
             }
         })
     }
 }
 
-export const clearCartAction = (id) => {
+export const clearCartAction = () => {
     return (dispatch) => {
         dispatch({
             type: actionTypes.CLEAR_CART

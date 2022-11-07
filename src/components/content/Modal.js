@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import CartProduct from "./CartProduct";
 import { TbShoppingCartOff } from "react-icons/tb";
 
-const Modal = ({ isOpen, closeModal, cartLoading, addToCart, removeFromCart, deleteFromCart, getOccurrence }) => {
+const Modal = ({ isOpen, closeModal }) => {
 	const cart = useSelector(state => state.cart);
 
 	return (
@@ -20,11 +20,9 @@ const Modal = ({ isOpen, closeModal, cartLoading, addToCart, removeFromCart, del
 				{cart.cartItems > 0
 					? <div className="flex md:flex-nowrap flex-wrap w-full">
 						<div className="md:w-7/12 w-full md:px-10 md:py-6 p-4 md:order-1 order-2 overflow-y-auto bg-slate-100">
-							{cart.itemsInfo.map((item, key) =>
-								<CartProduct key={key} item={item} cart={cart} cartLoading={cartLoading}
-									addToCart={addToCart} removeFromCart={removeFromCart} deleteFromCart={deleteFromCart} getOccurrence={getOccurrence} />
-								)
-							}
+							{cart.itemsInfo.map((product, key) =>
+								<CartProduct key={key} singleProduct={product} />
+							)}
 						</div>
 						<div className="md:w-5/12 w-full flex flex-col md:order-2 order-1 justify-center items-center lg:py-8 lg:px-12 p-6 bg-lightYellow">
 							<div className="cart_price mb-5 w-full">

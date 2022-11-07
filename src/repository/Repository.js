@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const urlPrefix = 'https://mcdonalds-cart-backend.herokuapp.com';
+// const urlPrefix = 'https://mcdonalds-cart-backend.herokuapp.com';
+const urlPrefix = 'http://localhost:8000';
 
 export const getMenus = async () => {
     const response = await axios.get(`${urlPrefix}/menu/list`)

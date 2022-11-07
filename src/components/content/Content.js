@@ -8,8 +8,8 @@ import { productActions } from '../../redux/actions/actions';
 import { bindActionCreators } from 'redux';
 import { useRef } from 'react';
 
-const Content = ({ products, loading, cartLoading, addToCart, addToCartInput, removeFromCart, handleSkeleton, stopLoadingSkeleton, getOccurrence }) => {
-    const currentMenu = useSelector(state => state.currentMenu);
+const Content = ({ productLoading, toggleProductLoading }) => {
+    const {currentMenu, products }= useSelector(state => state);
     const appContent = useRef(null);
     const [isScrolled, setIsScrolled] = useState(false);
     const [productSortValue, setProductSortValue] = useState("name");
@@ -23,28 +23,32 @@ const Content = ({ products, loading, cartLoading, addToCart, addToCartInput, re
         }
     }, [productSortValue])
 
+    useEffect(() => {
+        if (products) {
+            toggleProductLoading(false);
+        }
+    }, [products])
+    
     const addShadowOnScroll = (e) => {
         setIsScrolled(e.target.scrollTop > 0);
     }
     
     const handleProdcutSort = (e) => {
-        handleSkeleton();
         setProductSortValue(e.target.value);
         localStorage.setItem('productSortOption', e.target.value);
         getCategoryProductActionCreator(products);
-        stopLoadingSkeleton();
     }
 
     return (
         <div className={`w-full`}>
             <div className='app-content-header flex justify-between items-center sm:mb-6 mb-3'>
                 <div>
-                    <div className={`animate-pulse h-2 my-4 w-8 bg-lightYellow rounded ${loading ? '' : 'hidden'}`}></div>
-                    <span className={`text-lg whitespace-nowrap ${loading ? 'hidden' : ''}`}><span className='font-semibold'>{`${products ? products.length : '0'}`}</span> Items</span>
+                    <div className={`animate-pulse h-2 my-4 w-8 bg-lightYellow rounded ${productLoading ? '' : 'hidden'}`}></div>
+                    <span className={`text-lg whitespace-nowrap ${productLoading ? 'hidden' : ''}`}><span className='font-semibold'>{`${products ? products.length : '0'}`}</span> Items</span>
                 </div>
                 <div className='flex-initial justify-center mx-2 leading-none'>
-                    <div className={`animate-pulse h-2 my-4 w-20 bg-lightYellow rounded ${loading ? '' : 'hidden'}`}></div>
-                    <div className={`${loading ? 'hidden' : ''} menu-title md:text-4xl text-3xl text-center font-bold leading-none`}>{currentMenu && currentMenu.name ? currentMenu.name : 'Full Menu'}</div>
+                    <div className={`animate-pulse h-2 my-4 w-20 bg-lightYellow rounded ${productLoading ? '' : 'hidden'}`}></div>
+                    <div className={`${productLoading ? 'hidden' : ''} menu-title md:text-4xl text-3xl text-center font-bold leading-none`}>{currentMenu && currentMenu.name ? currentMenu.name : 'Full Menu'}</div>
                 </div>
                 <div>
                     <select className='w-36 px-3 py-1 flex border border-slate-300 rounded-md focus:border-lightYellow focus:caret-lightYellow focus:ring-1 focus:ring-yellow-300'
@@ -58,14 +62,13 @@ const Content = ({ products, loading, cartLoading, addToCart, addToCartInput, re
             </div>
 
             <div className='pr-4' style={{ maxHeight: 'calc(100vh - 170px)', overflow: 'hidden auto' }}>
-                <Skeleton count={3} type={'product'} loading={loading} />
+                <Skeleton count={3} type={'product'} loading={productLoading} />
             </div>
 
-            <div id='products' ref={appContent} className={`sm:pr-4 pr-3 ${loading ? 'hidden' : ''} ${isScrolled ? 'shadow-bottom' : ''}`} onScroll={addShadowOnScroll}>
+            <div id='products' ref={appContent} className={`sm:pr-4 pr-3 ${productLoading ? 'hidden' : ''} ${isScrolled ? 'shadow-bottom' : ''}`} onScroll={addShadowOnScroll}>
                 {products && products.length > 0 && products.map((product, key) =>
                     (product.name && product.name !== '') || product.price
-                        ? <Product key={key} product={product} cartLoading={cartLoading}
-                            addToCart={addToCart} addToCartInput={addToCartInput} removeFromCart={removeFromCart} getOccurrence={getOccurrence} />
+                        ? <Product key={key} product={product} />
                         : ''
                     )
                 }
