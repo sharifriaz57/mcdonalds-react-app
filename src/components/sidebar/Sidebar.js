@@ -74,7 +74,7 @@ const Sidebar = ({ focusOnSearch, toggleProductLoading }) => {
             getAllMenuActionCreator(response.data.menu);
             setLoading(false);
         }
-    }, 400);
+    }, 500);
 
     const getSelectedItems = (e) => {
         loadCategoryProducts(e, e.target.value);
