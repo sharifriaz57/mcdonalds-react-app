@@ -3,10 +3,11 @@ import './Content.css';
 import './Product.css';
 import Skeleton from './Skeleton';
 import Product from './Product';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { productActions } from '../../redux/actions/actions';
 import { bindActionCreators } from 'redux';
 import { useRef } from 'react';
+import { useCallback } from 'react';
 
 const Content = ({ productLoading, toggleProductLoading }) => {
     const {currentMenu, products }= useSelector(state => state);
@@ -22,12 +23,17 @@ const Content = ({ productLoading, toggleProductLoading }) => {
             setProductSortValue(currentSortOption);
         }
     }, [productSortValue])
-
-    useEffect(() => {
+        
+    const setProductLoading = useCallback(() => {
         if (products) {
             toggleProductLoading(false);
         }
-    }, [products])
+    }, [products, toggleProductLoading])
+
+    useEffect(() => {
+        setProductLoading();
+    }, [products, toggleProductLoading, setProductLoading])
+
     
     const addShadowOnScroll = (e) => {
         setIsScrolled(e.target.scrollTop > 0);
@@ -85,4 +91,4 @@ const Content = ({ productLoading, toggleProductLoading }) => {
     )
 }
 
-export default Content;
+export default memo(Content);
