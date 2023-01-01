@@ -14,7 +14,7 @@ function App() {
 		if (event.ctrlKey && event.keyCode === 81) {
 			setQuickSearch(prev => prev + 1);
 		}
-	}, [quickSearch]);
+	}, []);
 
 	useEffect(() => {
 		document.addEventListener('keydown', handleKeyPress);
@@ -30,7 +30,7 @@ function App() {
 	const closeModal = () => {
 		setIsOpen(false);
 	}
-
+  
 	const toggleProductLoading = (type) => setProductLoading(type)
 
 	return (
