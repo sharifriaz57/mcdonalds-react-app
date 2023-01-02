@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-// const urlPrefix = 'https://riaz57.insourcezone.com';
-const urlPrefix = 'http://localhost:8000';
+const urlPrefix = 'https://riaz57.insourcezone.com';
 
 export const getMenus = async () => {
     const response = await axios.get(`${urlPrefix}/menu/list`)
