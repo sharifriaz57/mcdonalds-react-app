@@ -7,7 +7,6 @@ import { useState, useEffect, memo } from 'react';
 import { productActions } from '../../redux/actions/actions';
 import { bindActionCreators } from 'redux';
 import { useRef } from 'react';
-import { useCallback } from 'react';
 
 const Content = ({ productLoading, toggleProductLoading }) => {
     const {currentMenu, products }= useSelector(state => state);
@@ -24,15 +23,15 @@ const Content = ({ productLoading, toggleProductLoading }) => {
         }
     }, [productSortValue])
         
-    const setProductLoading = useCallback(() => {
+    const setProductLoading = () => {
         if (products) {
             toggleProductLoading(false);
         }
-    }, [products, toggleProductLoading])
+    }
 
     useEffect(() => {
         setProductLoading();
-    }, [products, toggleProductLoading, setProductLoading])
+    }, [products])
 
     
     const addShadowOnScroll = (e) => {

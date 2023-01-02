@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { useEffect, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FiMinus } from "react-icons/fi";
@@ -11,26 +10,26 @@ const Product = ({ product }) => {
     const cartInput = useRef();
     const { cartLoading, invokeCartAction } = useCartAction();
     
-    const itemQuantity = useCallback((id) => {
+    const itemQuantity = (id) => {
         let qty = 0;
         cart.itemsInfo.length > 0 && cart.itemsInfo.forEach(item => item.id === id ? qty = item.qty : false);
         return qty;
-    }, [cart.itemsInfo])
+    }
   
-    const setValueOnLoad = useCallback(() => {
+    const setValueOnLoad = () => {
         cart.uniqueItemsId.length > 0 && cart.uniqueItemsId.forEach(id => {
             const qty = itemQuantity(id);
             if (cartInput.current.id === `inputQty${id}`) {
                 cartInput.current.value = qty;
             }
         });
-    }, [cart, itemQuantity])
+    }
 
     useEffect(() => {
         if (cartInput.current) {
             setValueOnLoad();
         }
-    }, [cart, setValueOnLoad])
+    }, [cart])
 
 
 

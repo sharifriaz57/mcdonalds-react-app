@@ -6,7 +6,6 @@ import { BsSearch } from "react-icons/bs";
 import { bindActionCreators } from 'redux';
 import { menuAction, productActions } from '../../redux/actions/actions';
 import Skeleton from '../content/Skeleton';
-import { useCallback } from 'react';
 
 const Sidebar = ({ focusOnSearch, toggleProductLoading }) => {
     const [loading, setLoading] = useState(true);
@@ -17,15 +16,15 @@ const Sidebar = ({ focusOnSearch, toggleProductLoading }) => {
     const { getAllMenuActionCreator, getCurrentMenuActionCreator } = bindActionCreators(menuAction, dispatch);
     const { getCategoryProductActionCreator } = bindActionCreators(productActions, dispatch);
     
-    const getSidebarMenu = useCallback(async () => {
+    const getSidebarMenu = async () => {
         const response = await getMenus();
         if (response.status === 200) {
             getAllMenuActionCreator(response.data);
             setLoading(false);
         }
-    }, [getAllMenuActionCreator])
+    }
     
-    const loadCategoryProducts = useCallback(async (e, id) => {
+    const loadCategoryProducts = async (e, id) => {
         toggleProductLoading(true);
         setActiveMenu(id);
         const categoryDetails = await getCategoryByCategoryId(id);
@@ -37,12 +36,12 @@ const Sidebar = ({ focusOnSearch, toggleProductLoading }) => {
         if (products.status === 200) {
             getCategoryProductActionCreator(products.data);
         }
-    }, [toggleProductLoading, getCurrentMenuActionCreator, getCategoryProductActionCreator])
+    }
     
     useEffect(() => {
         getSidebarMenu();
         loadCategoryProducts();
-    }, [getSidebarMenu, loadCategoryProducts]);
+    }, []);
 
     useEffect(() => {
         if (focusOnSearch > 0) {
